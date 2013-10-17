@@ -1,0 +1,20 @@
+{% extends "assassins/base.html" %}
+
+{% block content %}
+{% if current_player %}
+
+<p>
+  So you've eliminated {{ current_player.target.first_name }}... 
+<br />
+Please tell us how.</p>
+<textarea rows="4" cols="50">Don't spare any details -- the more exaggerated and untrue, the better</textarea>
+<div>
+<a href="confirm_kill">Confirm Kill</a>
+<a href=".">Wait! I haven't actually eliminated them yet</a>
+</div>
+{% else %}
+
+<p>No current player...</p>
+
+{% endif %}
+{% endblock %}

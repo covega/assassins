@@ -27,9 +27,10 @@ class Player(models.Model):
         self.save()
 
 
-# Initialize living field to True for Players
-#def setPlayerLiving(**kwargs):
-#    player = kwargs.get('instance')
-#    player.living = True;
-#
-#post_init.connect(setPlayerLiving, Player)
+class Quote(models.Model):
+    text = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    source = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return self.text

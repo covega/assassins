@@ -7,11 +7,13 @@
 <body>
   <div id="banner">
     <h1>Assassins</h1>
+    {% if quote %}
     <p>
-      <i>It's only in love and murder that we still remain sincere</i>
+      <i>{{ quote.text }}</i>
       <br />
-      - Friedrich Durrenmatt, <i>Incident at Twilight</i>
+      -{{ quote.author }}{% if quote.source != "" %}, <i>{{ quote.source }}</i> {% endif %}
     </p>
+    {% endif %}
   </div>
 
   <div id="content">
