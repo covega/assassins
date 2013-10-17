@@ -1,0 +1,17 @@
+{% extends "assassins/base.html" %}
+{% load tz %}
+
+
+{% block content %}
+
+<p>
+  Your new target is: <b>{{ current_player.target.full_name }}</b>
+  <br />
+  You were assigned this target at: {{ current_player.assign_time|utc }}
+  <br />
+  Good luck.
+  <br />
+  <a href=".">Home</a>
+</p>
+
+{% endblock %}
