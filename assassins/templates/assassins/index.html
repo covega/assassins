@@ -1,7 +1,12 @@
+{% extends "assassins/base.html" %}
 
+{% block content %}
 {% if current_player %}
-    <p>The current player's name is: {{ current_player.full_name }}</p>
+    <p>Hello {{ current_player.first_name }}.</p>
+    <p>Your target: {{ current_player.target.full_name }}</p>
+    <p>Time assigned: {{ current_player.assign_time }}</p>
+    <a href="kill">The deed is done.</a>
 {% else %}
     <p>No current player...</p>
 {% endif %}
-    
+{% endblock %}
