@@ -1,0 +1,9 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from assassins.models import Player
+
+def index(request):
+    test_text = "Hello world!"
+    context = {'test_text': test_text}
+    return render(request, 'assassins/index.html', context)

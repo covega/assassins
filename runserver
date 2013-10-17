@@ -1,0 +1,5 @@
+#!/bin/bash
+URL="gavilan-pi.stanford.edu"
+PORT="80"
+
+sudo python manage.py runserver $URL:$PORT
