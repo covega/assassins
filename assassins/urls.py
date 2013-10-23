@@ -6,4 +6,5 @@ urlpatterns = patterns('',
                        url(r'^$', views.index, name='index'),
                        url(r'^kill$', views.kill, name='kill'),
                        url(r'^confirm_kill$', views.confirm_kill, name='confirm_kill'),
+                       url(r'^submit_registration$', views.submit_registration, name='submit_registration'),
 )

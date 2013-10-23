@@ -1,0 +1,14 @@
+{% extends "assassins/base.html" %}
+
+{% block content %}
+
+<h3>Register New User</h3>
+
+<form action="submit_registration" method="post">
+{% csrf_token %}
+First name: <input type="text" name="first_name" value="{{ first_name }}">
+<br/>
+Last name: <input type="text" name="last_name" value="{{ last_name }}">
+<br/>
+<input type="submit" value="Register">
+{% endblock %}

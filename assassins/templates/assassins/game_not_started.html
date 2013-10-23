@@ -1,0 +1,10 @@
+{% extends "assassins/base.html" %}
+
+{% block content %}
+{% if current_player %}
+    <p>Hello {{ current_player.first_name }}.</p>
+    <p>You will receive your first contract shortly.</p>
+{% else %}
+    <p>No current player...</p>
+{% endif %}
+{% endblock %}
