@@ -2,6 +2,8 @@
 
 {% block content %}
 {% if current_player %}
+    {% include "assassins/rules.html" %}
+
     <p>Hello {{ current_player.first_name }}.</p>
     <p>Your target: {{ current_player.target.full_name }}</p>
     <p>Time assigned: {{ current_player.assign_time }}</p>

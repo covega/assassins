@@ -1,20 +1,23 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib import messages
-import assassins.settings
 
-from assassins.models import Player, Quote
+import assassins.settings
+from assassins.models import Player, Quote, game_over
+from assassins.utils import *
+
+from addison_encrypt import decrypt
 
 import os
 
-REDIRECT_SITE_URL = "www.stanford.edu/~gavilan/assassins.py"
+REDIRECT_SITE_URL = "www.stanford.edu/~gavilan/cgi-bin/assassins.py"
 
 # Sites
 def index(request):
     context = {}
 
     # Load morbid quote
-    get_quote(context)
+    context['quote'] = get_quote()
 
     # Get sunetid
     sunetid = get_sunetid(request)
@@ -43,12 +46,15 @@ def index(request):
 def kill(request):
     context = {}
 
-    temp_sunetid = 'gavilan'
+    context['quote'] = get_quote()
 
-    current_player = Player.objects.get(sunetid=temp_sunetid)
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+
+    current_player = Player.objects.get(sunetid=sunetid)
     context['current_player'] = current_player
-
-    get_quote(context)
 
     return render(request, 'assassins/kill.html', context)
 
@@ -56,23 +62,27 @@ def kill(request):
 def confirm_kill(request):
     context = {}
 
-    temp_sunetid = 'gavilan'
+    context['quote'] = get_quote()
 
-    current_player = Player.objects.get(sunetid=temp_sunetid)
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+
+    current_player = Player.objects.get(sunetid=sunetid)
     context['current_player'] = current_player
-
-    get_quote(context)
 
     details = request.POST['details']
 
     current_player.kill_target(details)
 
+    if (game_over()):
+        return render(request, 'assassins/winner.html', context)
+
     return render(request, 'assassins/confirm_kill.html', context)
 
 
 def submit_registration(request):
-    context = {}
-
     # Get sunetid
     sunetid = get_sunetid(request)
     if sunetid is None:
@@ -80,7 +90,7 @@ def submit_registration(request):
 
     first_name = request.POST['first_name']
     last_name = request.POST['last_name']
-    newPlayer = Player(sunetid=sunetid, first_name=first_name, last_name = last_name, living=False)
+    newPlayer = Player(sunetid=sunetid, first_name=first_name, last_name = last_name)
     newPlayer.save()
 
     messages.success(request, 'Registration successful')
@@ -111,64 +121,4 @@ def game_not_started(request, context):
     return render(request, site, context)
 
 
-'''
-Helper functions
-'''
-def get_quote(context):
-    # Get random quote
-    quote = Quote.objects.order_by('?')[0]
-    context['quote'] = quote
 
-def get_sunetid(request):
-    # URL string had encrypted sunetid in it
-    if 'usr' in request.GET:
-        # Get sunetid from URL
-        encrypted_sunetid = request.GET.get('usr')
-
-        # Decrypt it
-        sunetid = decrypt_id(encrypted_sunetid)
-
-        # Store it in the session
-        request.session['usr'] = sunetid
-
-        return sunetid
-
-    # sunetid is saved in the session
-    if 'usr' in request.session:
-        return request.session['usr']
-
-    # No sunetid found
-    return None
-
-
-def decrypt_id(encrypted_id):
-    id_minus_padding = encrypted_id[:-10]
-    sunetid = rot13(id_minus_padding)
-    return sunetid
-
-
-def rot13(s):
-    chars = "abcdefghijklmnopqrstuvwxyz"
-    trans = chars[13:]+chars[:13]
-    rot_char = lambda c: trans[chars.find(c)] if chars.find(c)>-1 else c
-    return ''.join( rot_char(c) for c in s ) 
-
-'''
-def get_encrypted_sunetid(request):
-    # URL string had sunetid in it
-    if 'usr' in request.GET:
-        # Get sunetid from URL
-        encrypted_sunetid = request.GET.get('usr')
-        
-        # Save sunetid in session
-        request.session['usr'] = encrypted_sunetid
-        
-        return encrypted_sunetid
-
-    # sunetid is saved in the session
-    if 'usr' in request.session:
-        return request.session['usr']
-
-    # No sunetid found
-    return None
-'''

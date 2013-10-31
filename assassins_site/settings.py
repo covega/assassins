@@ -74,7 +74,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/admin',
     #'/usr/local/lib/python2.7/dist-packages/django/contrib/admin/media/admin',
 )
 
@@ -161,3 +160,12 @@ LOGGING = {
         },
     }
 }
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'serra.assassins@gmail.com'
+EMAIL_HOST_PASSWORD = 'correct horse battery staple'
+EMAIL_SUBJECT_PREFIX = '[Assassins]'
+EMAIL_USE_TLS = True
