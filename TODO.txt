@@ -1,6 +1,4 @@
 Add display of game ring to admin interface
-Allow dead players to see everyone
-Allow living players to only see dead people
 if no user found, redirect to the WebAuth script
 change domain of raspberry pi to serra-assassins.stanford.edu
 move root domain to '/'
@@ -9,3 +7,4 @@ Save details of every kill in the database
 Save number of kills for each person
 Send digests to staff
 Add more quotes
+uncomment emailing the target for every kill

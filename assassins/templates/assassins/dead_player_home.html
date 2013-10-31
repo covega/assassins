@@ -2,6 +2,8 @@
 
 {% block content %}
 {% if current_player %}
-    <p>You have been assassinated...</p>
+{% include "assassins/living_players_list.html" %}
+{% include "assassins/dead_players_list.html" %}
+<p>You have been assassinated...</p>
 {% endif %}
 {% endblock %}

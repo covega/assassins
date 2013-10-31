@@ -2,13 +2,14 @@
 
 {% block content %}
 {% if current_player %}
-    {% include "assassins/rules.html" %}
+{% include "assassins/rules.html" %}
+{% include "assassins/dead_players_list.html" %}
 
-    <p>Hello {{ current_player.first_name }}.</p>
-    <p>Your target: {{ current_player.target.full_name }}</p>
-    <p>Time assigned: {{ current_player.assign_time }}</p>
-    <a href="kill">Submit assassination</a>
+<p>Hello {{ current_player.first_name }}.</p>
+<p>Your target: {{ current_player.target.full_name }}</p>
+<p>Time assigned: {{ current_player.assign_time }}</p>
+<a href="kill">Submit assassination</a>
 {% else %}
-    <p>No current player...</p>
+<p>No current player...</p>
 {% endif %}
 {% endblock %}

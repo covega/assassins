@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 
 import assassins.settings
@@ -35,6 +35,10 @@ def index(request):
     if not assassins.settings.GAME_STARTED:
         return game_not_started(request, context)
 
+    # Get list of dead and living players
+    context['dead_players'] = Player.objects.filter(living=False)
+    context['living_players'] = Player.objects.filter(living=True)
+
     # Game started, player still alive
     if (current_player.living):
         return living_player_home(request, context)
@@ -62,6 +66,7 @@ def kill(request):
 def confirm_kill(request):
     context = {}
 
+    # Get quote
     context['quote'] = get_quote()
 
     # Get sunetid
@@ -69,17 +74,28 @@ def confirm_kill(request):
     if sunetid is None:
         return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
 
+    # Get current player
     current_player = Player.objects.get(sunetid=sunetid)
     context['current_player'] = current_player
 
+    # Get details of kill
     details = request.POST['details']
 
-    current_player.kill_target(details)
+    # Only kill target if the submitted target matches the player's assigned
+    # target. (These can be put out of sync if the user clicks "Confirm kill"
+    # twice. The second time, the form will reflect a different target than
+    # the player's assigned target)
+    target_sunetid = request.POST['target']
+    if target_sunetid == current_player.target.sunetid:
+        current_player.kill_target(details)
 
-    if (game_over()):
-        return render(request, 'assassins/winner.html', context)
+        if (game_over()):
+            return render(request, 'assassins/winner.html', context)
 
-    return render(request, 'assassins/confirm_kill.html', context)
+    messages.success(request, 'You have been assigned your new target. Good luck.')
+
+    #return render(request, 'assassins/confirm_kill.html', context)
+    return HttpResponseRedirect('/assassins')
 
 
 def submit_registration(request):
@@ -95,7 +111,7 @@ def submit_registration(request):
 
     messages.success(request, 'Registration successful')
 
-    return index(request)
+    return HttpResponseRedirect('/assassins')
 
 '''
 Views Index may redirect to
