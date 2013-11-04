@@ -10,7 +10,7 @@ from addison_encrypt import decrypt
 
 import os
 
-REDIRECT_SITE_URL = "www.stanford.edu/~gavilan/cgi-bin/assassins.py"
+REDIRECT_SITE_URL = "/"
 
 # Sites
 def index(request):
@@ -22,7 +22,7 @@ def index(request):
     # Get sunetid
     sunetid = get_sunetid(request)
     if sunetid is None:
-        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+        return HttpResponseRedirect('/')
 
     # Get current player. If no player, ask if they want to play
     try:
@@ -55,7 +55,7 @@ def kill(request):
     # Get sunetid
     sunetid = get_sunetid(request)
     if sunetid is None:
-        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+        return HttpResponseRedirect('/')
 
     current_player = Player.objects.get(sunetid=sunetid)
     context['current_player'] = current_player
@@ -72,7 +72,7 @@ def confirm_kill(request):
     # Get sunetid
     sunetid = get_sunetid(request)
     if sunetid is None:
-        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+        return HttpResponseRedirect('/')
 
     # Get current player
     current_player = Player.objects.get(sunetid=sunetid)
@@ -102,7 +102,7 @@ def submit_registration(request):
     # Get sunetid
     sunetid = get_sunetid(request)
     if sunetid is None:
-        return HttpResponse("No user found. Did you mean to navigate to %s" % REDIRECT_SITE_URL)
+        return HttpResponseRedirect('/')
 
     first_name = request.POST['first_name']
     last_name = request.POST['last_name']
@@ -112,6 +112,8 @@ def submit_registration(request):
     messages.success(request, 'Registration successful')
 
     return HttpResponseRedirect('/assassins')
+
+
 
 '''
 Views Index may redirect to

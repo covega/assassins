@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, url
+from django.conf.urls.static import static
+from django.conf import settings
 
 from assassins import views
 
@@ -7,4 +9,4 @@ urlpatterns = patterns('',
     url(r'^kill$', views.kill, name='kill'),
     url(r'^confirm_kill$', views.confirm_kill, name='confirm_kill'),
     url(r'^submit_registration$', views.submit_registration, name='submit_registration'),
-)
+)# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

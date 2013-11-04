@@ -1,0 +1,17 @@
+@charset "UTF-8";
+body {
+
+    background-image: url(background.jpg);
+}
+body h1 {
+    color: #FFFFFF;
+}
+body #banner #QuoteText {
+    font-family: "MS Serif", "New York", serif;
+    font-style: italic;
+    color: #D0D0D0;
+}
+
+#content {
+    color: #D0D0D0;
+}

@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
   <title>Assassins</title>
+
+  <link href="{{ STATIC_URL }}assassins/base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
   <div id="banner">
     <h1>Assassins</h1>
     {% if quote %}
-    <p>
-      <i>{{ quote.text }}</i>
-      <br />
-      -{{ quote.author }}{% if quote.source != "" %}, <i>{{ quote.source }}</i> {% endif %}
-    </p>
+    <div id="Quote">
+      <div id="QuoteText">{{ quote.text }}</div>
+      <span id="QuoteDetails">-{{ quote.author }}{% if quote.source != "" %}, <i>{{ quote.source }}</i> {% endif %}</span>
+    </div>
     {% endif %}
   </div>
 
