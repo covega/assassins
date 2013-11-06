@@ -33,4 +33,5 @@ class Command(BaseCommand):
         self.stdout.write('Assigning %s target: %s' % (player.full_name(), target.full_name()))
 
         player.target = target
+        player.assign_time = now()
         player.save()

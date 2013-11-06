@@ -3,5 +3,6 @@ Implement timing out and dying
 Save details of every kill in the database
 Save number of kills for each person
 Send digests to staff
-Add more quotes
-uncomment emailing the target for every kill
+fix font on flash messages
+fix printing current game ring in email to admin (it showed me twice)
+

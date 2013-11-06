@@ -1,17 +1,65 @@
 @charset "UTF-8";
-body {
-
-    background-image: url(background.jpg);
+html {
+    /*background-color: #6E0000;*/
+    /*background-color: black;
+    background-image: url(background_gothic.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;*/
+    background: url(background_gothic2.jpg) no-repeat center center fixed;
+    background-size: cover;
+    min-width: 100%;
 }
 body h1 {
     color: #FFFFFF;
 }
+body #banner {
+    padding-bottom: 30px;
+}
+body #Quote {
+    color: #D0D0D0;
+}
 body #banner #QuoteText {
     font-family: "MS Serif", "New York", serif;
     font-style: italic;
+}
+
+body #banner #QuoteDetails {
+    font-size: 10px;
+}
+
+.messages {
     color: #D0D0D0;
 }
 
-#content {
-    color: #D0D0D0;
+#content {   
+    color: #FFFFFF;
+    width: 500px;
+}
+
+.sidebar {
+    float: right;
+}
+
+.noTopMargin{
+    margin-top: 0px;
+}
+
+.deadPlayers{
+    list-style-type: none;
+    font-style: italic;
+}
+
+a:link {
+    color: #FFFFFF;
+}
+a:visited {
+    color: #FFFFFF;
+}
+
+img {
+    height: 75px;
+    width: auto;
+    position: absolute;
+    left:170px;
+    top: 10px;
 }

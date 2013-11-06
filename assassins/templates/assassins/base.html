@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- Sneaky... You won't find anything useful here. -->
+
 <head>
-  <title>Assassins</title>
+  <title>{% block title %}Assassins{% endblock %}</title>
 
   <link href="{{ STATIC_URL }}assassins/base.css" rel="stylesheet" type="text/css" />
+  {% block extrahead %} {% endblock %}
 </head>
 
 <body>
   <div id="banner">
     <h1>Assassins</h1>
+    <img id="birds" src="{{ STATIC_URL }}assassins/birds.png">
     {% if quote %}
     <div id="Quote">
       <div id="QuoteText">{{ quote.text }}</div>

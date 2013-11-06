@@ -24,8 +24,8 @@ class Player(models.Model):
         victim.die()
         self.assign_time = now()
         self.save()
-        #self.emailKillInfoToAdmin(victim, details)
-        #self.emailKillInfoToTarget(victim)
+        self.emailKillInfoToAdmin(victim, details)
+        self.emailKillInfoToTarget(victim)
 
     def die(self):
         self.target = None

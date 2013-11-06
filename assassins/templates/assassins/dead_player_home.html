@@ -2,8 +2,10 @@
 
 {% block content %}
 {% if current_player %}
+<div class="sidebar">
 {% include "assassins/living_players_list.html" %}
 {% include "assassins/dead_players_list.html" %}
+</div>
 <p>You have been assassinated...</p>
 {% endif %}
 {% endblock %}
