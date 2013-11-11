@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 
 import assassins.settings
-from assassins.models import Player, Quote, game_over
+from assassins.models import *
 from assassins.utils import *
 
 from addison_encrypt import decrypt
@@ -89,7 +89,9 @@ def confirm_kill(request):
     if target_sunetid == current_player.target.sunetid:
         current_player.kill_target(details)
 
+        # Check if the game ended
         if (game_over()):
+            # TODO: email everyone that the game is over
             return render(request, 'assassins/winner.html', context)
 
     messages.success(request, 'You have been assigned your new target. Good luck.')
@@ -113,6 +115,20 @@ def submit_registration(request):
 
     return HttpResponseRedirect('/assassins')
 
+
+def status(request):
+    context = {}
+
+    # Load morbid quote
+    context['quote'] = get_quote()
+
+    # Load living players
+    context['game_ring'] = game_ring_in_order()
+
+    # Load dead players
+    context['dead_players'] = Player.objects.filter(living=False)
+
+    return render(request, 'assassins/status.html', context)
 
 
 '''

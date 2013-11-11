@@ -5,7 +5,8 @@ html {
     background-image: url(background_gothic.jpg);
     background-repeat: no-repeat;
     background-size: cover;*/
-    background: url(background_gothic2.jpg) no-repeat center center fixed;
+    /*background: url(background_gothic2.jpg) no-repeat center center fixed;*/
+    background: url(spy.jpg) no-repeat center center fixed;
     background-size: cover;
     min-width: 100%;
 }
@@ -33,10 +34,11 @@ body #banner #QuoteDetails {
 
 #content {   
     color: #FFFFFF;
-    width: 500px;
+    width: 650px;
 }
 
 .sidebar {
+    width: 400px;
     float: right;
 }
 
@@ -56,10 +58,17 @@ a:visited {
     color: #FFFFFF;
 }
 
-img {
+/*img {
     height: 75px;
     width: auto;
     position: absolute;
     left:170px;
     top: 10px;
+}*/
+
+img {
+    height:250px;
+    width: auto;
+    position: absolute;
+    top: -70px;
 }

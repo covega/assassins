@@ -1,0 +1,27 @@
+{% extends "assassins/base.html" %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown3.js"></script>
+{% endblock %}
+
+{% block content %}
+<h3>Living Players</h3>
+<ul>
+  {% for player in game_ring %}
+  <li>
+    {{player.full_name}} assigned {{player.target.full_name}}. Time remaining:
+    <span id="timer{{forloop.counter0}}"></span>
+  </li>
+  <script>
+    new Countdown( {{ player.get_time_remaining }}, "timer{{forloop.counter0}}" );
+  </script>
+  {% endfor %}
+</ul>
+
+<h3>Dead players</h3>
+<ul>
+  {% for player in dead_players %}
+  <li>{{player.full_name}}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

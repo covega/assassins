@@ -1,20 +1,24 @@
 {% extends "assassins/base.html" %}
 
 {% block extrahead %}
-<script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown3.js"></script>
 {% endblock %}
 
 {% block content %}
 {% if current_player %}
 <div class="sidebar">
-{% include "assassins/rules.html" %}
 {% include "assassins/dead_players_list.html" %}
+{% include "assassins/rules.html" %}
 </div>
 
 <p>Hello {{ current_player.first_name }}.</p>
 <p>Your target: {{ current_player.target.full_name }}</p>
-<p>Time assigned: {{ current_player.assign_time }}</p>
-<p><span id="timer"></span></p>
+<p>Time remaining: <span id="timer"></span></p>
+
+<script>
+  new Countdown( {{ current_player.get_time_remaining }}, "timer" );
+</script>
+
 <a href="kill">Submit assassination</a>
 {% else %}
 <p>No current player...</p>

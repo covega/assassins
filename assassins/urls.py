@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^kill$', views.kill, name='kill'),
     url(r'^confirm_kill$', views.confirm_kill, name='confirm_kill'),
     url(r'^submit_registration$', views.submit_registration, name='submit_registration'),
-)# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^status$', views.status, name='status'),
+)

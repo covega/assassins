@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 from django.core.mail import send_mail
 
-from assassins.settings import ADMIN_EMAILS, HOME_PAGE_URL
+from assassins.settings import *
 
 class Player(models.Model):
     sunetid = models.CharField(max_length=200)
@@ -31,6 +31,73 @@ class Player(models.Model):
         self.target = None
         self.living = False
         self.save()
+
+    def die_from_timeout(self):
+        # Save who is targeting me and who I am targeting
+        myKiller = Player.objects.get(target=self)
+        myTarget = self.target
+
+        # Die
+        self.die()
+
+        # Rewire the loop of players
+        myKiller.target = myTarget
+        myKiller.assign_time = now()
+        myKiller.save()
+
+        # Email everyone
+        #self.inform_of_self_timeout()
+        self.inform_admin_of_self_timeout()
+        myKiller.inform_of_victim_timeout()
+
+
+    def inform_admin_of_self_timeout(self):
+        subject = "%s timed out" % self.full_name()
+        message = "Current game ring:\n%s\n\n" % gameRingAsString()
+        
+        send_mail(subject, message, "Angel of Death", ADMIN_EMAILS)
+        
+
+    def inform_of_self_timeout(self):
+        subject = "You have been eliminated..."
+
+        message = ""
+        message += "The allotted time has passed and your contract has "
+        message += "expired. You have been eliminated."
+        message += "\n\n"
+        message += "Thanks for playing! You are invited to revisit %s " % HOME_PAGE_URL
+        message += "to see the list of currently living and assassinated "
+        message += "players. "
+        message += "\n"
+        message += "AS A REMINDER: Please do not tell your target who "
+        message += "assassinated you. Thanks!"
+        message += "\n"
+        message += "\n"
+        message += "-Gavi"
+
+        email = self.sunetid + "@stanford.edu"
+        
+        send_mail(subject, message, "Angel of Death", [email])
+
+
+    def inform_of_victim_timeout(self):
+        subject = "Your target has expired"
+
+        message = ""
+        message += "Your target failed to fulfill their contract in time "
+        message += "and has been eliminated."
+        message += "\n\n"
+        message += "Your new target is %. " % self.target.full_name()
+        message 
+        
+
+    def get_time_remaining(self):
+        time_elapsed = now() - self.assign_time
+        if (PLAYER_TIMEOUT_VALUE > time_elapsed):
+            time_remaining = PLAYER_TIMEOUT_VALUE - time_elapsed
+            return int(time_remaining.total_seconds())  #truncate decimals
+        else:
+            return 0
 
     def emailKillInfoToAdmin(self, deceased, details):
         killer = self
@@ -81,18 +148,35 @@ class Quote(models.Model):
         return self.text
 
 
-def gameRingAsString():
+def game_ring_in_order():
     players = list(Player.objects.filter(living=True))
+    if len(players) is 0:
+        return players
+
+    firstPlayer = players[0]
+    currentPlayer = firstPlayer.target
+    
+    index = 1
+    while (currentPlayer != firstPlayer):
+        players[index] = currentPlayer
+        currentPlayer = currentPlayer.target
+        index += 1
+
+    return players
+    
+
+def gameRingAsString():
+    players = game_ring_in_order()
     output = ""
         
     for player in players[:-1]:
         target = player.target
         output += "%s is assigned %s\n" % (player.full_name(), target.full_name())
            
-        # Wrap end of list back to beginning
-        player = players[-1]
-        target = players[0]
-        output += "%s is assigned %s\n" % (player.full_name(), target.full_name())
+    # Wrap end of list back to beginning
+    player = players[-1]
+    target = players[0]
+    output += "%s is assigned %s\n" % (player.full_name(), target.full_name())
             
     return output
 
