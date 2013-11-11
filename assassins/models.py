@@ -42,11 +42,11 @@ class Player(models.Model):
 
         # Rewire the loop of players
         myKiller.target = myTarget
-        myKiller.assign_time = now()
+        #myKiller.assign_time = now()
         myKiller.save()
 
         # Email everyone
-        #self.inform_of_self_timeout()
+        self.inform_of_self_timeout()
         self.inform_admin_of_self_timeout()
         myKiller.inform_of_victim_timeout()
 
@@ -69,9 +69,6 @@ class Player(models.Model):
         message += "to see the list of currently living and assassinated "
         message += "players. "
         message += "\n"
-        message += "AS A REMINDER: Please do not tell your target who "
-        message += "assassinated you. Thanks!"
-        message += "\n"
         message += "\n"
         message += "-Gavi"
 
@@ -87,8 +84,13 @@ class Player(models.Model):
         message += "Your target failed to fulfill their contract in time "
         message += "and has been eliminated."
         message += "\n\n"
-        message += "Your new target is %. " % self.target.full_name()
-        message 
+        message += "Your new target is %s " % self.target.full_name()
+        message += "\n\n"
+        message += "Good luck."
+
+        email = self.sunetid + "@stanford.edu"
+
+        send_mail(subject, message, 'Angel of Death', [email])
         
 
     def get_time_remaining(self):
@@ -128,7 +130,7 @@ class Player(models.Model):
         message += "players. "
         message += "\n"
         message += "AS A REMINDER: Please do not tell your target who "
-        message += "assassinated you. Thanks!"
+        message += "assassinated you."
         message += "\n"
         message += "\n"
         message += "-Gavi"
