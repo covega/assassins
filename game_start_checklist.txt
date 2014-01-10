@@ -1,0 +1,7 @@
+set debugging = False
+Set game_started = False
+Email registration link to everyone
+run python manage.py assign_targets
+set debugging = True
+email all to check their assignments
+email staff link to view status of game

@@ -1,9 +1,7 @@
-Add display of game ring to admin interface
-Implement timing out and dying
+Set DEBUG = False
 Save details of every kill in the database
 Save number of kills for each person
 Send digests to staff
 fix font on flash messages
-fix printing current game ring in email to admin (it showed me twice)
 email everyone when the game ends
 have timeout deaths check if the game is over

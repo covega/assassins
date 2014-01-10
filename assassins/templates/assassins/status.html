@@ -2,6 +2,8 @@
 
 {% block extrahead %}
 <script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown3.js"></script>
+<!-- account for clock skew -->
+<meta http-equiv="refresh" content="600">
 {% endblock %}
 
 {% block content %}

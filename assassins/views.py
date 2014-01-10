@@ -91,7 +91,6 @@ def confirm_kill(request):
 
         # Check if the game ended
         if (game_over()):
-            # TODO: email everyone that the game is over
             return render(request, 'assassins/winner.html', context)
 
     messages.success(request, 'You have been assigned your new target. Good luck.')
