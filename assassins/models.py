@@ -4,11 +4,29 @@ from django.core.mail import send_mail
 
 from assassins.settings import *
 
+
+
+class Dorm(models.Model):
+    name = models.CharField(max_length=200)
+    game_started = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+
+
+class Admin(models.Model):
+    sunetid = models.CharField(max_length=200)    
+    dorm = models.ForeignKey(Dorm)
+    
+    def __unicode__(self):
+        return self.sunetid
+
+
 class Player(models.Model):
     sunetid = models.CharField(max_length=200)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    dorm = models.CharField(max_length=200)
+    dorm = models.ForeignKey(Dorm)
     target = models.OneToOneField('self', null=True, blank=True)
     assign_time = models.DateTimeField(null=True, blank=True)
     living = models.BooleanField(default=True)
@@ -151,8 +169,8 @@ class Quote(models.Model):
         return self.text
 
 
-def game_ring_in_order():
-    players = list(Player.objects.filter(living=True))
+def game_ring_in_order(dorm):
+    players = list(Player.objects.filter(living=True, dorm=dorm))
     if len(players) is 0:
         return players
 

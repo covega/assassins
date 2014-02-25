@@ -35,7 +35,7 @@ def index(request):
     dorm = current_player.dorm
 
     # Game hasn't started yet
-    if not assassins.settings.GAME_STARTED[dorm]:
+    if not dorm.game_started:
         return game_not_started(request, context)
 
     # Get list of dead and living players
@@ -110,7 +110,8 @@ def submit_registration(request):
 
     first_name = request.POST['first_name']
     last_name = request.POST['last_name']
-    dorm = request.POST['dorm']
+    dorm_name = request.POST['dorm']
+    dorm = Dorm.objects.get(name=dorm_name)
 
     newPlayer = Player(sunetid=sunetid, first_name=first_name, last_name = last_name, dorm=dorm)
     newPlayer.save()
@@ -118,6 +119,21 @@ def submit_registration(request):
     messages.success(request, 'Registration successful')
 
     return HttpResponseRedirect('/assassins')
+
+
+def admin(request):
+    # Get sunetid
+    sunetid = get_sunetid(request)
+
+    dorm = assassins.settings.ADMINS[sunetid]
+
+    context = {}
+    context['quote'] = get_quote()
+    context['dorm'] = dorm
+    context['game_ring'] = game_ring_in_order(dorm)
+    context['dead_players'] = Player.objects.filter(living=False, dorm=dorm)
+
+    return render(request, 'assassins/admin.html', context)
 
 
 def status(request):
@@ -151,7 +167,7 @@ def dead_player_home(request, context):
 def register_new_player(request, context, sunetid):
     context['first_name'] = request.GET['first']
     context['last_name'] = request.GET['last']
-    context['dorms'] = assassins.settings.PARTICIPATING_DORMS
+    context['dorms'] = Dorm.objects.all()
     site = 'assassins/register_new_player.html'
     return render(request, site, context)
 

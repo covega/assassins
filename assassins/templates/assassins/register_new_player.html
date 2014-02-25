@@ -15,7 +15,7 @@ Last name: <input type="text" name="last_name" value="{{ last_name }}">
 Dorm: 
 <select name="dorm" required>
   {% for dorm in dorms %}
-  <option value="{{ dorm }}">{{ dorm }}</option>
+  <option value="{{ dorm.name }}">{{ dorm.name }}</option>
   {% endfor %}
 </select>
 <input type="submit" value="Register">
