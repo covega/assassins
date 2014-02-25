@@ -12,5 +12,11 @@ First name: <input type="text" name="first_name" value="{{ first_name }}">
 <br/>
 Last name: <input type="text" name="last_name" value="{{ last_name }}">
 <br/>
+Dorm: 
+<select name="dorm" required>
+  {% for dorm in dorms %}
+  <option value="{{ dorm }}">{{ dorm }}</option>
+  {% endfor %}
+</select>
 <input type="submit" value="Register">
 {% endblock %}

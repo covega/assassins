@@ -1,8 +1,10 @@
 from datetime import timedelta
 
-GAME_STARTED = True
+GAME_STARTED = {'Serra': True, 'Otero': True}
 
 ADMIN_EMAILS = ['gavilan@stanford.edu']
+
+PARTICIPATING_DORMS = ['Serra', 'Otero']
 
 HOME_PAGE_URL = 'serra-assassins.stanford.edu'
 

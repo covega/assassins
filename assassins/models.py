@@ -8,6 +8,7 @@ class Player(models.Model):
     sunetid = models.CharField(max_length=200)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
+    dorm = models.CharField(max_length=200)
     target = models.OneToOneField('self', null=True, blank=True)
     assign_time = models.DateTimeField(null=True, blank=True)
     living = models.BooleanField(default=True)
