@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^submit_registration$', views.submit_registration, name='submit_registration'),
     #url(r'^status$', views.status, name='status'),
     url(r'^admin/', views.admin, name='admin'),
+    url(r'^update_dorm_info$', views.update_dorm_info, name='update_dorm_info'),
 )

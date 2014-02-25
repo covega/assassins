@@ -24,6 +24,13 @@ def index(request):
     if sunetid is None:
         return HttpResponseRedirect('/')
 
+    # If viewer is an admin, render admin page
+    try:
+        admin_obj = Admin.objects.get(sunetid=sunetid)
+        return admin(request, context, admin_obj)
+    except Admin.DoesNotExist as e:
+        pass
+
     # Get current player. If no player, ask if they want to play
     try:
         current_player = Player.objects.get(sunetid=sunetid)
@@ -121,14 +128,39 @@ def submit_registration(request):
     return HttpResponseRedirect('/assassins')
 
 
-def admin(request):
+def update_dorm_info(request):
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponseRedirect('/')
+
+    # Error out if poster is not an admin
+    try:
+        admin_obj = Admin.objects.get(sunetid=sunetid)
+    except Admin.DoesNotExist as e:
+        messages.error(request, "You're not an admin...")
+        return HttpResponseRedirect('/')
+
+    dorm = admin_obj.dorm
+
+    if (request.POST['game_started'] == 'true'):
+        dorm.game_started = True
+    else:
+        dorm.game_started = False
+
+    dorm.save()
+    
+    messages.success(request, "Dorm info updated successfully")
+    
+    return HttpResponseRedirect('/assassins')
+
+
+def admin(request, context, admin):
     # Get sunetid
     sunetid = get_sunetid(request)
 
-    dorm = assassins.settings.ADMINS[sunetid]
+    dorm = admin.dorm
 
-    context = {}
-    context['quote'] = get_quote()
     context['dorm'] = dorm
     context['game_ring'] = game_ring_in_order(dorm)
     context['dead_players'] = Player.objects.filter(living=False, dorm=dorm)

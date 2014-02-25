@@ -5,3 +5,9 @@ Send digests to staff
 fix font on flash messages
 email everyone when the game ends
 have timeout deaths check if the game is over
+
+admin page
+ - email all field
+ - assign targets field
+ - Set game started field
+
