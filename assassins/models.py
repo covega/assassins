@@ -72,9 +72,15 @@ class Player(models.Model):
 
     def inform_admin_of_self_timeout(self):
         subject = "%s timed out" % self.full_name()
-        message = "Current game ring:\n%s\n\n" % gameRingAsString()
+        message = "Current game ring:\n%s\n\n" % game_ring_as_string(self.dorm)
+
+        admins = Admin.objects.filter(dorm=self.dorm)
         
-        send_mail(subject, message, "Angel of Death", ADMIN_EMAILS)
+        admin_emails = [admin.sunetid+"@stanford.edu" for admin in admins]
+        
+        send_mail(subject, message, 
+                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                  ADMIN_EMAILS)
         
 
     def inform_of_self_timeout(self):
@@ -89,11 +95,12 @@ class Player(models.Model):
         message += "players. "
         message += "\n"
         message += "\n"
-        message += "-Gavi"
 
         email = self.sunetid + "@stanford.edu"
         
-        send_mail(subject, message, "Angel of Death", [email])
+        send_mail(subject, message, 
+                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                  [email])
 
 
     def inform_of_victim_timeout(self):
@@ -109,7 +116,9 @@ class Player(models.Model):
 
         email = self.sunetid + "@stanford.edu"
 
-        send_mail(subject, message, 'Angel of Death', [email])
+        send_mail(subject, message,
+                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                  [email])
         
 
     def get_time_remaining(self):
@@ -130,34 +139,37 @@ class Player(models.Model):
         
         # New target
         message += "New target: %s\n" % killer.target.full_name()
-        # Assign time
-        message += "Assign time: %s\n" % str(killer.assign_time)
         # Details
         message += "Details:\n%s\n\n" % details
         # Current game ring
-        message += "Current game ring:\n%s\n\n" % gameRingAsString()
+        message += "Current game ring:\n%s\n\n" % game_ring_as_string(self.dorm)
         
-        send_mail(subject, message, "Angel of Death", ADMIN_EMAILS)
+        admins = Admin.objects.filter(dorm=self.dorm)
+        admin_emails = [admin.sunetid+"@stanford.edu" for admin in admins]
+
+        send_mail(subject, message, 
+                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                  admin_emails)
 
 
     def emailKillInfoToTarget(self, target):
         subject = "You have been assassinated..."
         
         message = ""
-        message += "Thanks for playing! You are invited to revisit %s " % HOME_PAGE_URL
+        message += "You are invited to revisit %s " % HOME_PAGE_URL
         message += "to see the list of currently living and assassinated "
         message += "players. "
-        message += "\n"
-        message += "AS A REMINDER: Please do not tell your target who "
+        message += "\n\n"
+        message += "As a reminder: Please DO NOT tell your target who "
         message += "assassinated you."
-        message += "\n"
-        message += "\n"
-        message += "-Gavi"
+        message += "\n\n"
+        message += "Thanks for playing!"
         
         target_email = target.sunetid + "@stanford.edu"
-        #target_email = 'gavilan' + "@stanford.edu"
         
-        send_mail(subject, message, "Angel of Death", [target_email])
+        send_mail(subject, message, 
+                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                  [target_email])
 
 
 class Quote(models.Model):
@@ -186,8 +198,8 @@ def game_ring_in_order(dorm):
     return players
     
 
-def gameRingAsString():
-    players = game_ring_in_order()
+def game_ring_as_string(dorm):
+    players = game_ring_in_order(dorm)
     output = ""
         
     for player in players[:-1]:
@@ -202,41 +214,30 @@ def gameRingAsString():
     return output
 
 
-def email_all(subject, message, email_admins=True):
-    dest_emails = []
-
-    if (email_admins):
-        dest_emails += ADMIN_EMAILS
-
-    players = Player.objects.all()            
-    for player in players:
-        sunetid = player.sunetid
-        email_addr = "%s@stanford.edu" % sunetid
-        dest_emails.append(email_addr)
-
-    send_mail(subject, message, "Serra Assassins", dest_emails)
-
-
-def game_over():
-    players = list(Player.objects.filter(living=True))
+def game_over(dorm):
+    players = list(Player.objects.filter(living=True, dorm=dorm))
     if len(players) == 1:
         winningPlayer = players[0]
-        send_game_over_message(winningPlayer)
+        send_game_over_message(winningPlayer, dorm)
         return True
     
     return False
 
-def send_game_over_message(winningPlayer):
+def send_game_over_message(winningPlayer, dorm):
     subject = "Your Assassins Champion"
     
     message = ""
     message += "...is %s! Congratulations!" % winningPlayer.full_name()
-    message += "\n\n"
-    message += "Thanks for playing everyone"
-    message += "\n\n"
-    message += "-Gavi"
 
-    email_all(subject, message)
+    players = Player.objects.filter(dorm=dorm)
+    admins = Admin.objects.filter(dorm=dorm)
+
+    dest_addresses = [player.sunetid+"@stanford.edu" for player in players]
+    dest_addresses.extend([admin.sunetid+"@stanford.edu" for admin in admins])
+
+    send_mail(subject, message, 
+              "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
+              dest_addresses)
 
 
 def assign_targets(dorm):

@@ -100,7 +100,7 @@ def confirm_kill(request):
         current_player.kill_target(details)
 
         # Check if the game ended
-        if (game_over()):
+        if (game_over(current_player.dorm)):
             return render(request, 'assassins/winner.html', context)
 
     messages.success(request, 'You have been assigned your new target. Good luck.')
