@@ -1,0 +1,53 @@
+<form action="update_dorm_info" method="post">
+{% csrf_token %}
+Game Started (leave this as False while people are registering):
+<input type="radio" 
+       name="game_started" 
+       value="true" 
+       {% if dorm.game_started %} checked {% endif %}>
+True
+</input>
+<input type="radio" 
+       name="game_started" 
+       value="false"
+       {% if not dorm.game_started %} checked {% endif %}>
+False</input>
+<input type="submit" value="Update"></input>
+</form>
+
+<form action="assign_targets">
+  Want to randomly assign/reassign targets to all living players? 
+  <input type="submit" value="Assign Targets">
+</form>
+<form action="/admin">
+  Manually edit stuff:
+  <input type="submit" value="Site Administration">
+</form>
+<br/>
+
+<h3> Send an email! </h3>
+<form action="send_email">
+  To:
+  <br/>
+  <input type="radio" name="recipients" value="everyone">Everyone</input>
+  <input type="radio" name="recipients" value="living">All living</input>
+  <input type="radio" name="recipients" value="dead">All dead</input>
+  <br/>
+  <input type="radio" name="recipients" value="specific">Specific recipients (use ctrl to select multiple):</input>
+  <br/>
+  <select name="recipient_list" size="1" multiple>
+    {% for player in all_players %}
+    <option value={{player.sunetid}}> {{player.full_name}} </option> 
+    {% endfor %}
+  </select>
+  <br/>
+  From: 
+  <input type="text" name="from_field" maxlength="100", value="Angel of Death">
+  <br/>
+  Subject:
+  <input type="text" name="subject_field" maxlength="100">
+  <br/>
+  <textarea name="body" maxlength="1000" rows="5" cols="50">Type the body of your message here! Include any signature.</textarea>
+  <br/>
+  <input type="submit" value="Send Email">
+</form>

@@ -1,0 +1,30 @@
+{% extends "assassins/base.html" %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown3.js"></script>
+<!-- account for clock skew -->
+<meta http-equiv="refresh" content="600">
+{% endblock %}
+
+{% block content %}
+<h2>Super Secret Admin Page!</h2>
+<p>Dorm: {{ dorm }}</p>
+
+{% include "assassins/admin_ui.html" %}
+
+<br/>
+<h3>Living Players</h3>
+<ul>
+  {% for player in living_players %}
+  <li>
+    {{player.full_name}} assigned {{player.target.full_name}}. Time remaining:
+    <span id="timer{{forloop.counter0}}"></span>
+  </li>
+  <script>
+    new Countdown( {{ player.get_time_remaining }}, "timer{{forloop.counter0}}" );
+  </script>
+  {% endfor %}
+</ul>
+
+{% include "assassins/dead_players_list.html" %}
+{% endblock %}
