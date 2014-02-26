@@ -35,7 +35,7 @@ False</input>
   <br/>
   <input type="radio" name="recipients" value="specific">Specific recipients (use ctrl to select multiple):</input>
   <br/>
-  <select name="recipient_list" size="1" multiple>
+  <select name="recipient_list" multiple="multiple">
     {% for player in all_players %}
     <option value={{player.sunetid}}> {{player.full_name}} </option> 
     {% endfor %}
