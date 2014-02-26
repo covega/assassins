@@ -164,9 +164,13 @@ LOGGING = {
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'serra.assassins@gmail.com'
-EMAIL_HOST_PASSWORD = 'correct horse battery staple'
+#EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'localhost'
+#EMAIL_PORT = 587
+EMAIL_PORT = 25
+#EMAIL_HOST_USER = 'serra.assassins@gmail.com'
+EMAIL_HOST_USER = 'pi@assassins.stanford.edu'
+#EMAIL_HOST_PASSWORD = 'correct horse battery staple'
+EMAIL_HOST_PASSWORD = 'trombone'
 EMAIL_SUBJECT_PREFIX = '[Assassins]'
 EMAIL_USE_TLS = True

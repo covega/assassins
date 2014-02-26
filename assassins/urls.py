@@ -12,4 +12,6 @@ urlpatterns = patterns('',
     #url(r'^status$', views.status, name='status'),
     url(r'^admin/', views.admin, name='admin'),
     url(r'^update_dorm_info$', views.update_dorm_info, name='update_dorm_info'),
+    url(r'^assign_targets$', views.assign_targets, name='assign_targets'),
+    url(r'^send_email$', views.send_email, name='send_email'),
 )

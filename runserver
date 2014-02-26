@@ -1,5 +1,5 @@
 #!/bin/bash
-URL="serra-assassins.stanford.edu"
+URL="assassins.stanford.edu"
 PORT="80"
 
 sudo python manage.py runserver $URL:$PORT

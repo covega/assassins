@@ -8,6 +8,6 @@ ADMIN_EMAILS = ['gavilan@stanford.edu']
 
 PARTICIPATING_DORMS = ['Serra', 'Otero']
 
-HOME_PAGE_URL = 'serra-assassins.stanford.edu'
+HOME_PAGE_URL = 'assassins.stanford.edu'
 
 PLAYER_TIMEOUT_VALUE = timedelta(seconds=259200)

@@ -155,32 +155,65 @@ def update_dorm_info(request):
     return HttpResponseRedirect('/assassins')
 
 
-def admin(request, context, admin):
+def assign_targets(request):
     # Get sunetid
     sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponseRedirect('/')
 
-    dorm = admin.dorm
+    # Error out if poster is not an admin
+    try:
+        admin_obj = Admin.objects.get(sunetid=sunetid)
+    except Admin.DoesNotExist as e:
+        messages.error(request, "You're not an admin...")
+        return HttpResponseRedirect('/')
 
-    context['dorm'] = dorm
-    context['game_ring'] = game_ring_in_order(dorm)
-    context['dead_players'] = Player.objects.filter(living=False, dorm=dorm)
+    dorm = admin_obj.dorm
 
-    return render(request, 'assassins/admin.html', context)
+    assassins.models.assign_targets(dorm)
+    
+    messages.success(request, "Targets assigned!")
+    
+    return HttpResponseRedirect('/assassins')
 
 
-def status(request):
-    context = {}
+def send_email(request):
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponseRedirect('/')
 
-    # Load morbid quote
-    context['quote'] = get_quote()
+    # Error out if poster is not an admin
+    try:
+        admin_obj = Admin.objects.get(sunetid=sunetid)
+    except Admin.DoesNotExist as e:
+        messages.error(request, "You're not an admin...")
+        return HttpResponseRedirect('/')
 
-    # Load living players
-    context['game_ring'] = game_ring_in_order()
+    dorm = admin_obj.dorm
 
-    # Load dead players
-    context['dead_players'] = Player.objects.filter(living=False)
+    recipients_type = request.GET['recipients']
+    if recipients_type == "everyone":
+        recipients = Player.objects.filter(dorm=dorm)
+    elif recipients_type == "living":
+        recipients = Player.objects.filter(dorm=dorm, living=True)
+    elif recipients_type == "dead":
+        recipients = Player.objects.filter(dorm=dorm, living=False)
+    elif recipients_type == "specific":
+        recipient_list = request.GET.getlist('recipient_list')
+        recipients = Player.objects.filter(dorm=dorm, sunetid__in = recipient_list)
+    else:
+        messages.error(request, "Bad recipients choice. Recipients is %s" % recipients_type)
+        return HttpResponseRedirect('/assassins')
 
-    return render(request, 'assassins/status.html', context)
+    dest_addresses = [recip.sunetid + "@stanford.edu" for recip in recipients]
+    subject_field = request.GET['subject_field']
+    from_field = request.GET['from_field'] + " <noreply@assassins.stanford.edu>"
+    body = request.GET['body']
+
+    send_mail(subject_field, body, from_field, dest_addresses)
+    messages.success(request, "Email sent!")
+    return HttpResponseRedirect('/assassins')
 
 
 '''
@@ -208,4 +241,16 @@ def game_not_started(request, context):
     return render(request, site, context)
 
 
+def admin(request, context, admin):
+    # Get sunetid
+    sunetid = get_sunetid(request)
+
+    dorm = admin.dorm
+
+    context['dorm'] = dorm
+    context['living_players'] = Player.objects.filter(living=True, dorm=dorm)
+    context['dead_players'] = Player.objects.filter(living=False, dorm=dorm)
+    context['all_players'] = Player.objects.filter(dorm=dorm)
+
+    return render(request, 'assassins/admin.html', context)
 

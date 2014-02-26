@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 
 from assassins.settings import *
 
-
+from random import shuffle
 
 class Dorm(models.Model):
     name = models.CharField(max_length=200)
@@ -237,3 +237,29 @@ def send_game_over_message(winningPlayer):
     message += "-Gavi"
 
     email_all(subject, message)
+
+
+def assign_targets(dorm):
+    players = list(Player.objects.filter(living=True, dorm=dorm))
+    shuffle(players)
+    
+    # Null out any previous assignments for each player
+    for player in players:
+        player.target = None
+        player.save()
+        
+    # Assign targets to each player
+    for index, player in enumerate(players[:-1]):
+        target = players[index + 1]
+        
+        player.target = target
+        player.assign_time = now()#.replace(tzinfo=utc)
+        player.save()
+        
+    # Wrap end of list back around to the beginning to complete cycle
+    player = players[-1]
+    target = players[0]
+    
+    player.target = target
+    player.assign_time = now()
+    player.save()
