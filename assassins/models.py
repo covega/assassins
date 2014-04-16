@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 from assassins.settings import *
 
@@ -78,9 +78,14 @@ class Player(models.Model):
         
         admin_emails = [admin.sunetid+"@stanford.edu" for admin in admins]
         
-        send_mail(subject, message, 
-                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
-                  ADMIN_EMAILS)
+        #send_mail(subject, message, 
+        #          "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+        #          ADMIN_EMAILS)
+        email = EmailMessage(subject, message, 
+                             "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                             to=[OUTGOING_MAIL_ADDRESS],
+                             bcc=admin_emails)
+        email.send()
         
 
     def inform_of_self_timeout(self):
@@ -98,9 +103,15 @@ class Player(models.Model):
 
         email = self.sunetid + "@stanford.edu"
         
-        send_mail(subject, message, 
-                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
-                  [email])
+        #send_mail(subject, message, 
+        #          "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+        #          [email])
+
+        email = EmailMessage(subject, message, 
+                             "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                             to=[OUTGOING_MAIL_ADDRESS],
+                             bcc=[email])
+        email.send()
 
 
     def inform_of_victim_timeout(self):
@@ -116,9 +127,15 @@ class Player(models.Model):
 
         email = self.sunetid + "@stanford.edu"
 
-        send_mail(subject, message,
-                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
-                  [email])
+        #send_mail(subject, message,
+        #          "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+        #          [email])
+
+        email = EmailMessage(subject, message, 
+                             "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                             to=[OUTGOING_MAIL_ADDRESS],
+                             bcc=[email])
+        email.send()
         
 
     def get_time_remaining(self):
@@ -147,9 +164,15 @@ class Player(models.Model):
         admins = Admin.objects.filter(dorm=self.dorm)
         admin_emails = [admin.sunetid+"@stanford.edu" for admin in admins]
 
-        send_mail(subject, message, 
-                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
-                  admin_emails)
+        #send_mail(subject, message, 
+        #          "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+        #          admin_emails)
+
+        email = EmailMessage(subject, message, 
+                             "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                             to=[OUTGOING_MAIL_ADDRESS],
+                             bcc=admin_emails)
+        email.send()
 
 
     def emailKillInfoToTarget(self, target):
@@ -167,9 +190,15 @@ class Player(models.Model):
         
         target_email = target.sunetid + "@stanford.edu"
         
-        send_mail(subject, message, 
-                  "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
-                  [target_email])
+        #send_mail(subject, message, 
+        #          "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+        #          [target_email])
+
+        email = EmailMessage(subject, message, 
+                             "Angel of Death <%s>" % OUTGOING_MAIL_ADDRESS, 
+                             to=[OUTGOING_MAIL_ADDRESS],
+                             bcc=[target_email])
+        email.send()
 
 
 class Quote(models.Model):
@@ -235,9 +264,15 @@ def send_game_over_message(winningPlayer, dorm):
     dest_addresses = [player.sunetid+"@stanford.edu" for player in players]
     dest_addresses.extend([admin.sunetid+"@stanford.edu" for admin in admins])
 
-    send_mail(subject, message, 
-              "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
-              dest_addresses)
+    #send_mail(subject, message, 
+    #          "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
+    #          dest_addresses)
+
+    email = EmailMessage(subject, message, 
+                         "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
+                         to=[OUTGOING_MAIL_ADDRESS],
+                         bcc=dest_addresses)
+    email.send()
 
 
 def assign_targets(dorm):

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from django.core.mail import EmailMessage
 
 import assassins.settings
 from assassins.models import *
@@ -208,10 +209,15 @@ def send_email(request):
 
     dest_addresses = [recip.sunetid + "@stanford.edu" for recip in recipients]
     subject_field = request.GET['subject_field']
-    from_field = request.GET['from_field'] + " <noreply@assassins.stanford.edu>"
+    from_field = request.GET['from_field'] + " <%s>" % OUTGOING_MAIL_ADDRESS
     body = request.GET['body']
 
-    send_mail(subject_field, body, from_field, dest_addresses)
+    #send_mail(subject_field, body, from_field, dest_addresses)
+    email = EmailMessage(subject_field, body, from_field, 
+                         to=[OUTGOING_MAIL_ADDRESS],
+                         bcc=dest_addresses)
+    email.send()
+
     messages.success(request, "Email sent!")
     return HttpResponseRedirect('/assassins')
 
