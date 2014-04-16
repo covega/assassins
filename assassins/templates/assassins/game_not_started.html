@@ -2,6 +2,9 @@
 
 {% block content %}
 {% if current_player %}
+<div class="sidebar">
+{% include "assassins/rules.html" %}
+</div>
     <p>Hello {{ current_player.first_name }}.</p>
     <p>You will receive your first contract shortly.</p>
 {% else %}
