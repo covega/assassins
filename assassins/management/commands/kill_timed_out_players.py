@@ -7,6 +7,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         players = Player.objects.filter(living=True)
         for player in players:
+            # Don't time people out if it's the final 2
+            nLivingPlayers = Player.objects.filter(living=True, dorm=player.dorm).count()
+            if nLivingPlayers <= 2:
+                self.stdout.write("Ignoring player timeouts because of 2 or fewer survivors")
+                continue
+
             if player.get_time_remaining() == 0:
                 self.stdout.write("Eliminating %s due to timeout" % player.full_name())
                 player.die_from_timeout()

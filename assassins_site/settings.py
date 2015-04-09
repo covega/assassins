@@ -171,6 +171,6 @@ EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'serra.assassins@gmail.com'
 EMAIL_HOST_USER = 'pi@assassins.stanford.edu'
 #EMAIL_HOST_PASSWORD = 'correct horse battery staple'
-EMAIL_HOST_PASSWORD = 'trombone'
+EMAIL_HOST_PASSWORD = 'assassins'
 EMAIL_SUBJECT_PREFIX = '[Assassins]'
 EMAIL_USE_TLS = True
