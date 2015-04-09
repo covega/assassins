@@ -10,7 +10,9 @@ class Command(BaseCommand):
             # Don't time people out if it's the final 2
             nLivingPlayers = Player.objects.filter(living=True, dorm=player.dorm).count()
             if nLivingPlayers <= 2:
-                self.stdout.write("Ignoring player timeouts because of 2 or fewer survivors")
+                continue
+
+            if (not player.dorm.game_started) or player.dorm.sudden_death:
                 continue
 
             if player.get_time_remaining() == 0:

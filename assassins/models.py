@@ -18,6 +18,9 @@ class Dorm(models.Model):
         return self.name
 
     def get_sudden_death_countdown_remaining(self):
+        if not self.sudden_death_countdown:
+            return 0
+
         #time_elapsed = now() - self.sudden_death_countdown
         time_remaining = self.sudden_death_countdown - now()
         if (time_remaining.total_seconds() > 0):
@@ -282,6 +285,8 @@ def game_over(dorm):
     return False
 
 def send_game_over_message(winningPlayer, dorm):
+    if not SENDING_EMAILS: return;
+
     subject = "Your Assassins Champion"
     
     message = ""
@@ -302,6 +307,38 @@ def send_game_over_message(winningPlayer, dorm):
                          to=[OUTGOING_MAIL_ADDRESS],
                          bcc=dest_addresses)
     email.send()
+
+def send_sudden_death_message(dorm):
+    if not SENDING_EMAILS: return;
+
+    subject = "Assassins Sudden Death"
+    
+    message = ""
+    message += "The final two assassins have failed on their final and most "
+    message += "important assignment. \n"
+    message += "\n"
+    message += "Dissappointing...\n"
+    message += "\n"
+    message += "The deceased now have a chance to influence the outcome. Please "
+    message += "visit %s for the details of your opportunity." % HOME_PAGE_URL
+
+    players = Player.objects.filter(dorm=dorm)
+    admins = Admin.objects.filter(dorm=dorm)
+
+    dest_addresses = [player.sunetid+"@stanford.edu" for player in players]
+    dest_addresses.extend([admin.sunetid+"@stanford.edu" for admin in admins])
+
+    #send_mail(subject, message, 
+    #          "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
+    #          dest_addresses)
+
+    email = EmailMessage(subject, message, 
+                         "Assassins <%s>" % OUTGOING_MAIL_ADDRESS, 
+                         to=[OUTGOING_MAIL_ADDRESS],
+                         bcc=dest_addresses)
+    email.send()
+
+
 
 
 def assign_targets(dorm, reset_timestamps=True):

@@ -3,7 +3,7 @@ set SENDING_EMAIL_ADDRESSES = True
 Set game_started for each dorm = False
 Email registration link to everyone
 run python manage.py assign_targets
-startup cron tasks for timing out players
+startup cron tasks for timing out players and converting to sudden death
 	requires "sudo python manage.py cron"
 email all to check their assignments
 populate the admin database

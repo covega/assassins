@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-SENDING_EMAILS = False
+SENDING_EMAILS = True
 
 HOME_PAGE_URL = 'assassins.stanford.edu'
 
