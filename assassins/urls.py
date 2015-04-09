@@ -13,5 +13,7 @@ urlpatterns = patterns('',
     url(r'^admin/', views.admin, name='admin'),
     url(r'^update_dorm_info$', views.update_dorm_info, name='update_dorm_info'),
     url(r'^assign_targets$', views.assign_targets, name='assign_targets'),
+    url(r'^shuffle_targets$', views.shuffle_targets, name='shuffle_targets'),
     url(r'^send_email$', views.send_email, name='send_email'),
+    url(r'sudden_death_kill$', views.sudden_death_kill, name='sudden_death_kill'),
 )

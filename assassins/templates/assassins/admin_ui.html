@@ -1,3 +1,12 @@
+<p>Game over: {{ dorm.game_over }} </p>
+<p>Sudden death: {{ dorm.sudden_death }} </p>
+{% if dorm.sudden_death_countdown %}
+<p>Time until sudden death: <span id="sudden_death_timer"></span></p>
+<script>
+  new Countdown( {{ dorm.get_sudden_death_countdown_remaining }}, "sudden_death_timer" );
+</script>
+{% endif %}
+
 <form action="update_dorm_info" method="post">
 {% csrf_token %}
 Game Started (leave this as False while people are registering):
@@ -16,9 +25,15 @@ False</input>
 </form>
 
 <form action="assign_targets">
-  Want to randomly assign/shuffle targets to all living players? 
+  Want to randomly assign initial targets (with timestamps) to all living players? 
   <input type="submit" value="Assign Targets">
 </form>
+
+<form action="shuffle_targets">
+  Want to shuffle targets between living players? (Preserving timestamps)
+  <input type="submit" value="Shuffle Targets">
+</form>
+
 <form action="/admin">
   Manually edit stuff:
   <input type="submit" value="Site Administration">

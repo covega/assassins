@@ -1,4 +1,5 @@
 set debugging = False
+set SENDING_EMAIL_ADDRESSES = True
 Set game_started for each dorm = False
 Email registration link to everyone
 run python manage.py assign_targets

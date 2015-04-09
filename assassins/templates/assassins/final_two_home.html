@@ -1,0 +1,55 @@
+{% extends "assassins/base.html" %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{ STATIC_URL }}assassins/countdown3.js"></script>
+<!-- account for clock skew -->
+<meta http-equiv="refresh" content="600">
+{% endblock %}
+
+{% block content %}
+{% if current_player %}
+<div class="sidebar">
+{% include "assassins/living_players_list.html" %}
+{% include "assassins/dead_players_list.html" %}
+{% include "assassins/rules.html" %}
+</div>
+
+
+{% if dorm.sudden_death %}
+
+<h2>Sudden Death</h2>
+<form action="sudden_death_kill" method="post">
+  {% csrf_token %}
+  Submit a kill
+  <select name="target">
+  {% for player in living_players %}
+    <option value={{player.sunetid}}> {{player.full_name}} </option>
+  {% endfor %}
+  </select>
+  <input type="submit" value="Submit Kill">
+</form>
+
+{% elif current_player.living %}
+
+<p>Hello {{ current_player.first_name }}.</p>
+<P>Welcome to the final two.</p>
+<p>Your target: {{ current_player.target.full_name }}</p>
+<p>Time until sudden death: <span id="timer"></span></p>
+<script>
+  new Countdown( {{ dorm.get_sudden_death_countdown_remaining }}, "timer" );
+</script>
+<a href="kill">Submit assassination</a>
+
+{% else %}
+
+<p>Sudden death countdown: <span id="timer"></span></p>
+<script>
+  new Countdown( {{ dorm.get_sudden_death_countdown_remaining }}, "timer" );
+</script>
+
+{% endif %}
+
+{% else %}
+<p>No current player...</p>
+{% endif %}
+{% endblock %}

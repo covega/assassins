@@ -9,9 +9,26 @@ from random import shuffle
 class Dorm(models.Model):
     name = models.CharField(max_length=200)
     game_started = models.BooleanField(default=False)
+    sudden_death_countdown = models.DateTimeField(null=True, blank=True)
+    sudden_death = models.BooleanField(default=False)
+    game_over = models.BooleanField(default=False)
+    
     
     def __unicode__(self):
         return self.name
+
+    def get_sudden_death_countdown_remaining(self):
+        #time_elapsed = now() - self.sudden_death_countdown
+        time_remaining = self.sudden_death_countdown - now()
+        if (time_remaining.total_seconds() > 0):
+            #time_remaining = SUDDEN_DEATH_COUNTDOWN_VALUE - time_elapsed
+            return int(time_remaining.total_seconds())  #truncate decimals
+        else:
+            return 0
+
+    def start_sudden_death_countdown(self):
+        self.sudden_death_countdown = now() + SUDDEN_DEATH_COUNTDOWN_VALUE
+        self.save()
 
 
 class Admin(models.Model):
@@ -71,6 +88,8 @@ class Player(models.Model):
 
 
     def inform_admin_of_self_timeout(self):
+        if not SENDING_EMAILS: return;
+
         subject = "%s timed out" % self.full_name()
         message = "Current game ring:\n%s\n\n" % game_ring_as_string(self.dorm)
 
@@ -89,6 +108,8 @@ class Player(models.Model):
         
 
     def inform_of_self_timeout(self):
+        if not SENDING_EMAILS: return;
+
         subject = "You have been eliminated..."
 
         message = ""
@@ -115,6 +136,8 @@ class Player(models.Model):
 
 
     def inform_of_victim_timeout(self):
+        if not SENDING_EMAILS: return;
+
         subject = "Your target has expired"
 
         message = ""
@@ -147,6 +170,8 @@ class Player(models.Model):
             return 0
 
     def emailKillInfoToAdmin(self, deceased, details):
+        if not SENDING_EMAILS: return;
+
         killer = self
         killer_name = killer.full_name()
         deceased_name = deceased.full_name()
@@ -176,6 +201,8 @@ class Player(models.Model):
 
 
     def emailKillInfoToTarget(self, target):
+        if not SENDING_EMAILS: return;
+
         subject = "You have been assassinated..."
         
         message = ""
@@ -248,6 +275,8 @@ def game_over(dorm):
     if len(players) == 1:
         winningPlayer = players[0]
         send_game_over_message(winningPlayer, dorm)
+        dorm.game_over = True
+        dorm.save()
         return True
     
     return False
@@ -275,7 +304,7 @@ def send_game_over_message(winningPlayer, dorm):
     email.send()
 
 
-def assign_targets(dorm):
+def assign_targets(dorm, reset_timestamps=True):
     players = list(Player.objects.filter(living=True, dorm=dorm))
     shuffle(players)
     
@@ -289,7 +318,8 @@ def assign_targets(dorm):
         target = players[index + 1]
         
         player.target = target
-        player.assign_time = now()#.replace(tzinfo=utc)
+        if (reset_timestamps):
+            player.assign_time = now()#.replace(tzinfo=utc)
         player.save()
         
     # Wrap end of list back around to the beginning to complete cycle
@@ -297,5 +327,6 @@ def assign_targets(dorm):
     target = players[0]
     
     player.target = target
-    player.assign_time = now()
+    if (reset_timestamps):
+        player.assign_time = now()
     player.save()

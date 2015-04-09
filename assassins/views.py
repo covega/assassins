@@ -46,9 +46,17 @@ def index(request):
     if not dorm.game_started:
         return game_not_started(request, context)
 
+    # Game is over
+    if dorm.game_over:
+        return game_over_render(request, context)
+
     # Get list of dead and living players
     context['dead_players'] = Player.objects.filter(living=False, dorm=dorm)
     context['living_players'] = Player.objects.filter(living=True, dorm=dorm)
+
+    # Game started, final 2 players
+    if ( len(list(Player.objects.filter(living=True, dorm=dorm))) == 2):
+        return final_two_home(request, context, dorm)
 
     # Game started, player still alive
     if (current_player.living):
@@ -103,6 +111,10 @@ def confirm_kill(request):
         # Check if the game ended
         if (game_over(current_player.dorm)):
             return render(request, 'assassins/winner.html', context)
+
+        # Check if final 2
+        if Player.objects.filter(living=True, dorm=current_player.dorm).count() == 2:
+            current_player.dorm.start_sudden_death_countdown()
 
     messages.success(request, 'You have been assigned your new target. Good luck.')
 
@@ -178,6 +190,56 @@ def assign_targets(request):
     return HttpResponseRedirect('/assassins')
 
 
+def shuffle_targets(request):
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponseRedirect('/')
+
+    # Error out if poster is not an admin
+    try:
+        admin_obj = Admin.objects.get(sunetid=sunetid)
+    except Admin.DoesNotExist as e:
+        messages.error(request, "You're not an admin...")
+        return HttpResponseRedirect('/')
+
+    dorm = admin_obj.dorm
+
+    assassins.models.assign_targets(dorm, reset_timestamps=False)
+    
+    messages.success(request, "Targets shuffled!")
+    
+    return HttpResponseRedirect('/assassins')
+
+
+def sudden_death_kill(request):
+    context = {}
+
+    context['quote'] = get_quote()
+
+    # Get sunetid
+    sunetid = get_sunetid(request)
+    if sunetid is None:
+        return HttpResponseRedirect('/')
+
+    current_player = Player.objects.get(sunetid=sunetid)
+    context['current_player'] = current_player
+
+    dorm = current_player.dorm
+
+    target_sunetid = request.POST['target']
+    target = Player.objects.get(sunetid=target_sunetid)
+
+    winner = target.target
+    winner.target = None
+    target.die()
+
+    game_over(dorm)
+    
+    messages.success(request, "Kill submitted")
+    return game_over_render(request, context)
+
+
 def send_email(request):
     # Get sunetid
     sunetid = get_sunetid(request)
@@ -208,6 +270,10 @@ def send_email(request):
         return HttpResponseRedirect('/assassins')
 
     dest_addresses = [recip.sunetid + "@stanford.edu" for recip in recipients]
+    admins = Admin.objects.filter(dorm=dorm)
+    admin_emails = [admin.sunetid+"@stanford.edu" for admin in admins]
+    dest_addresses.extend(admin_emails)
+
     subject_field = request.GET['subject_field']
     from_field = request.GET['from_field'] + " <%s>" % OUTGOING_MAIL_ADDRESS
     body = request.GET['body']
@@ -244,6 +310,17 @@ def register_new_player(request, context, sunetid):
 
 def game_not_started(request, context):
     site = 'assassins/game_not_started.html'
+    return render(request, site, context)
+
+
+def game_over_render(request, context):
+    site = 'assassins/game_over.html'
+    return render(request, site, context)
+
+
+def final_two_home(request, context, dorm):
+    context['dorm'] = dorm
+    site = 'assassins/final_two_home.html'
     return render(request, site, context)
 
 
